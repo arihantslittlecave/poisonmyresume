@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>poisonmyresume</title>
+  <meta name="description" content="Upload your resume. Get back convincing gibberish. Confuse every AI scraper harvesting your personal data.">
+  <meta property="og:title" content="poisonmyresume">
+  <meta property="og:description" content="Poison your resume for AI scrapers. Free, nothing stored.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0a0a0a;--card:#111111;--sub:#101010;--mut:#161616;
+      --b:#1e1e1e;--bm:#2a2a2a;--bh:#3a3a3a;
+      --t:#efefef;--tm:#808080;--ts:#3d3d3d;
+      --red:#e53e3e;--ok:#5cb85c;
+      --r:8px;--rl:12px;
+    }
+    html{-webkit-font-smoothing:antialiased}
+    body{font-family:'Satoshi',system-ui,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;display:flex;flex-direction:column;font-size:14px}
+    nav{border-bottom:1px solid var(--b);padding:0 28px;height:50px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:10}
+    .brand{font-size:13px;font-weight:500}
+    .badge{font-size:11px;color:var(--red);background:rgba(229,62,62,.1);border:1px solid rgba(229,62,62,.2);padding:2px 8px;border-radius:999px;font-weight:500}
+    .page{flex:1;max-width:1080px;margin:0 auto;width:100%;padding:32px 28px 64px}
+    .grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;grid-template-rows:auto 1fr;gap:10px;align-items:start}
+    .panel{background:var(--card);border:1px solid var(--b);border-radius:var(--rl);padding:24px}
+    .pmain{grid-column:1;grid-row:1/3;display:flex;flex-direction:column;gap:18px}
+    .pwhy{grid-column:2;grid-row:1}
+    .pmeta{grid-column:2;grid-row:2}
+    .tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+    h1{font-size:24px;font-weight:500;letter-spacing:-.03em;line-height:1.25;margin-bottom:7px}
+    .sub{font-size:13px;color:var(--tm);line-height:1.65;max-width:420px}
+    .uzone{border:1.5px dashed var(--bm);border-radius:var(--r);padding:20px;cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--sub);position:relative;transition:background .12s,border-color .12s}
+    .uzone:hover{background:var(--mut);border-color:var(--bh)}
+    .uzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .uicon{width:34px;height:34px;background:var(--mut);border:1px solid var(--bm);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--tm);font-size:16px}
+    .utxt p{font-size:13px;font-weight:500;margin-bottom:2px}
+    .utxt span{font-size:11px;color:var(--ts)}
+    .pill{display:none;align-items:center;gap:8px;background:var(--mut);border:1px solid var(--bm);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--tm);width:fit-content}
+    .pill.show{display:flex}
+    .pill-name{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t);font-weight:500}
+    .pill button{background:none;border:none;cursor:pointer;color:var(--ts);font-size:14px;line-height:1;padding:0;display:flex;align-items:center;font-family:inherit}
+    .pill button:hover{color:var(--t)}
+    .div{display:flex;align-items:center;gap:10px;color:var(--ts);font-size:11px}
+    .div::before,.div::after{content:'';flex:1;height:1px;background:var(--b)}
+    textarea{width:100%;font-family:'Satoshi',system-ui,sans-serif;font-size:13px;background:var(--sub);border:1px solid var(--b);border-radius:var(--r);padding:12px 14px;color:var(--t);outline:none;resize:none;display:block;transition:border-color .12s;line-height:1.65}
+    textarea:focus{border-color:var(--bh)}
+    textarea::placeholder{color:var(--ts)}
+    #inp{height:155px}
+    #out{height:195px}
+    .lrow{display:flex;align-items:center;gap:10px}
+    .llbl{font-size:12px;color:var(--tm)}
+    .seg{display:flex;background:var(--sub);border:1px solid var(--b);border-radius:var(--r);padding:3px;gap:2px}
+    .seg button{font-family:'Satoshi',system-ui,sans-serif;font-size:12px;font-weight:500;padding:5px 13px;border-radius:6px;border:none;background:transparent;color:var(--ts);cursor:pointer;transition:all .12s}
+    .seg button.on{background:var(--mut);color:var(--t);border:1px solid var(--bh)}
+    .btn{font-family:'Satoshi',system-ui,sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:var(--r);border:1px solid var(--bm);background:var(--mut);color:var(--t);cursor:pointer;transition:background .12s,border-color .12s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+    .btn:hover{background:#1e1e1e;border-color:var(--bh)}
+    .btn:active{transform:scale(.98)}
+    .btn:disabled{opacity:.28;cursor:not-allowed;transform:none}
+    .btn.pri{background:var(--red);color:#fff;border-color:var(--red)}
+    .btn.pri:hover{background:#d13535;border-color:#d13535}
+    .btn.ghost{background:transparent;border-color:transparent;color:var(--tm);padding-left:8px;padding-right:8px}
+    .btn.ghost:hover{background:var(--mut);border-color:var(--b);color:var(--t)}
+    .btn.sm{font-size:12px;padding:5px 11px}
+    .arow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .st{font-size:12px;color:var(--tm);margin-left:auto}
+    .st.ok{color:var(--ok)}
+    .st.err{color:var(--red)}
+    #ow{display:none;flex-direction:column;gap:10px}
+    #ow.show{display:flex}
+    .oh{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+    .olbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ts)}
+    .oa{display:flex;gap:5px;flex-wrap:wrap}
+    .why-lbl,.meta-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ts);margin-bottom:14px}
+    .pwhy p{font-size:12.5px;color:var(--tm);line-height:1.8;margin-bottom:12px}
+    .pwhy p:last-child{margin-bottom:0}
+    .pwhy strong{color:var(--t);font-weight:500}
+    .pmeta{display:flex;flex-direction:column;gap:14px}
+    .mlist{display:flex;flex-direction:column;gap:8px}
+    .mi{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--tm)}
+    .md{width:4px;height:4px;border-radius:50%;background:var(--bh);flex-shrink:0}
+    footer{border-top:1px solid var(--b);padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+    footer span{font-size:12px;color:var(--ts)}
+    footer a{font-size:12px;color:var(--ts);text-decoration:none}
+    footer a:hover{color:var(--tm)}
+    @media(max-width:720px){
+      .grid{grid-template-columns:1fr;grid-template-rows:auto}
+      .pmain,.pwhy,.pmeta{grid-column:1;grid-row:auto}
+      .page{padding:20px 16px 48px}
+      nav{padding:0 16px}
+      footer{padding:14px 16px}
+      h1{font-size:20px}
+    }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .loading{animation:pulse 1s infinite}
+  </style>
+</head>
+<body>
+  <nav>
+    <span class="brand">poisonmyresume</span>
+    <span class="badge">free tool</span>
+  </nav>
+  <div class="page">
+    <div class="grid">
+      <div class="panel pmain">
+        <div>
+          <div class="tag">data poisoning</div>
+          <h1>Poison your resume<br>for AI scrapers.</h1>
+          <p class="sub">Upload or paste your resume. Get back convincing gibberish in the same format. Same structure, zero real data.</p>
+        </div>
+        <div class="uzone" id="dz">
+          <input type="file" id="fi" accept=".pdf,.txt" onchange="loadF(this.files[0])">
+          <div class="uicon">&#8593;</div>
+          <div class="utxt">
+            <p>Drop your resume or click to upload</p>
+            <span>PDF or TXT — processed locally, never sent to a server</span>
+          </div>
+        </div>
+        <div class="pill" id="fpill">
+          <span class="pill-name" id="fname"></span>
+          <button onclick="clearF()" aria-label="Remove file">&#215;</button>
+        </div>
+        <div class="div">or paste below</div>
+        <textarea id="inp" placeholder="Paste your resume here..." aria-label="Resume input"></textarea>
+        <div class="lrow">
+          <span class="llbl">Poison level</span>
+          <div class="seg" role="group" aria-label="Poison level">
+            <button data-l="mild" onclick="setL('mild')" aria-pressed="false">Mild</button>
+            <button data-l="chaos" onclick="setL('chaos')" class="on" aria-pressed="true">Chaos</button>
+            <button data-l="unhinged" onclick="setL('unhinged')" aria-pressed="false">Unhinged</button>
+          </div>
+        </div>
+        <div class="arow">
+          <button class="btn pri" id="pb" onclick="poison()">Poison it</button>
+          <button class="btn ghost" onclick="clrAll()">Clear</button>
+          <span class="st" id="st" aria-live="polite"></span>
+        </div>
+        <div id="ow">
+          <div class="oh">
+            <span class="olbl">Poisoned output</span>
+            <div class="oa">
+              <button class="btn sm" onclick="cp()">Copy</button>
+              <button class="btn sm" onclick="dlTxt()">TXT</button>
+              <button class="btn sm" onclick="dlPdf()">PDF</button>
+            </div>
+          </div>
+          <textarea id="out" readonly aria-label="Poisoned resume output"></textarea>
+        </div>
+      </div>
+      <div class="panel pwhy">
+        <div class="why-lbl">Why this exists</div>
+        <p>Every resume you post online is a data point. Job boards, LinkedIn, recruiter portals all get scraped. That data ends up in AI training sets without your knowledge or consent.</p>
+        <p>Data poisoning is a real countermeasure. Flood the web with fake but believable data and scraped datasets become unreliable. Models trained on poisoned data perform worse. <strong>Fighting AI with AI.</strong></p>
+        <p>Post the poisoned version wherever scrapers reach. Keep the real one for actual applications. Your resume is yours. What gets scraped is noise.</p>
+      </div>
+      <div class="panel pmeta">
+        <div class="meta-lbl">About this tool</div>
+        <div class="mlist">
+          <div class="mi"><div class="md"></div>Nothing is saved or stored</div>
+          <div class="mi"><div class="md"></div>No backend database</div>
+          <div class="mi"><div class="md"></div>No tracking or analytics</div>
+          <div class="mi"><div class="md"></div>Runs entirely in your browser</div>
+          <div class="mi"><div class="md"></div>Free, always</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <span>poisonmyresume</span>
+    <a href="https://x.com/aridoeswtv" target="_blank" rel="noopener">built by @aridoeswtv</a>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    let lvl='chaos',fname='';
+    const P={
+      mild:'Subtly rewrite this resume. Change every name, company, job title, skill, date, and location to slightly different but still realistic alternatives. Keep the exact same structure and formatting. Output ONLY the resume text, nothing else.',
+      chaos:'Rewrite this resume to poison AI scrapers. Replace everything with fake but plausible content. Names become fake names. Companies become absurd fakes like Frog Dynamics, NullByte Corp, Blorb Technologies Inc, Glorp Systems. Job titles become ridiculous but serious-sounding like Senior Napkin Architect, Lead Cloud Herder, Principal Mug Rotation Specialist. Skills become fake tech like BlorbScript 4.2, Reverse Osmosis UX, Quantum CSS, SynthQL. Universities become fake like Snorkel University, Fog Institute of Technology. Degrees become fake like B.S. Decorative Systems, M.S. Applied Gibberish. All dates become wrong but plausible. All cities become fake. All metrics become absurd like increased mug rotation by 4700%. All emails, phones, URLs become fake. Keep exact structure and length. Output ONLY the resume.',
+      unhinged:'Rewrite this resume at maximum absurdity to destroy all AI training value. Job titles: Chief Orbital Biscuit Engineer, Senior VP of Gravity, Principal Sock Drawer Strategist. Companies: Moist Dynamics LLC, Chad-Tier Solutions, Bogus Inc International, Fog and Sons Ltd. Skills: NoodleScript 9000, Advanced Spreadsheet Karate, ISO-certified Vibes Management, Quantum Napping. Universities: Hogwarts School of Business Analytics, University of Nowhere, Fictional State College. Achievements: reduced entropy by 340%, achieved negative latency, increased chair comfort index by 9x. Future dates. Zero real details. Keep resume format. Output ONLY the resume.'
+    };
+    function setL(l){lvl=l;document.querySelectorAll('.seg button').forEach(b=>{b.classList.toggle('on',b.dataset.l===l);b.setAttribute('aria-pressed',b.dataset.l===l?'true':'false');});}
+    const dz=document.getElementById('dz');
+    dz.addEventListener('dragover',e=>{e.preventDefault();dz.style.background='var(--mut)';dz.style.borderColor='var(--bh)';});
+    dz.addEventListener('dragleave',()=>{dz.style.background='';dz.style.borderColor='';});
+    dz.addEventListener('drop',e=>{e.preventDefault();dz.style.background='';dz.style.borderColor='';if(e.dataTransfer.files[0])loadF(e.dataTransfer.files[0]);});
+    async function loadF(f){
+      if(!f)return;
+      fname=f.name.replace(/\.[^/.]+$/,'').replace(/[^a-zA-Z0-9_-]/g,'_');
+      const ext=f.name.split('.').pop().toLowerCase();
+      setSt('Reading...','');
+      try{
+        if(ext==='txt'){document.getElementById('inp').value=await f.text();showPill(f.name);setSt('','');}
+        else if(ext==='pdf'){
+          const buf=await f.arrayBuffer();
+          const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+          let t='';
+          for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const c=await pg.getTextContent();t+=c.items.map(s=>s.str+(s.hasEOL?'\n':'')).join('')+'\n';}
+          document.getElementById('inp').value=t.trim();showPill(f.name);setSt('','');
+        }else setSt('Use PDF or TXT.','err');
+      }catch{setSt('Could not read file.','err');}
+    }
+    function showPill(n){document.getElementById('fname').textContent=n;document.getElementById('fpill').classList.add('show');}
+    function clearF(){document.getElementById('fpill').classList.remove('show');document.getElementById('fi').value='';fname='';}
+    async function poison(){
+      const inp=document.getElementById('inp').value.trim();
+      if(!inp){setSt('Paste your resume first.','err');return;}
+      const btn=document.getElementById('pb');
+      btn.disabled=true;btn.textContent='Poisoning...';btn.classList.add('loading');
+      setSt('','');document.getElementById('ow').classList.remove('show');
+      try{
+        const r=await fetch('/api/poison',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.1-8b-instant',max_tokens:1500,temperature:0.9,messages:[{role:'system',content:P[lvl]},{role:'user',content:inp}]})});
+        const d=await r.json();
+        if(d.error)throw new Error(d.error.message);
+        const t=d.choices?.[0]?.message?.content||'';
+        document.getElementById('out').value=t;
+        document.getElementById('ow').classList.add('show');
+        setSt('Done.','ok');
+      }catch{setSt('Error. Check Cloudflare setup.','err');}
+      btn.disabled=false;btn.textContent='Poison it';btn.classList.remove('loading');
+    }
+    function getOut(){return document.getElementById('out').value;}
+    function getFn(e){return(fname||'poisoned_resume')+'_poisoned.'+e;}
+    function cp(){navigator.clipboard.writeText(getOut());setSt('Copied.','ok');}
+    function dlTxt(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([getOut()],{type:'text/plain'}));a.download=getFn('txt');a.click();setSt('Downloaded.','ok');}
+    function dlPdf(){
+      const text=getOut();if(!text)return;
+      const{jsPDF}=window.jspdf;
+      const doc=new jsPDF({unit:'pt',format:'a4'});
+      const mg=52,pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight(),mw=pw-mg*2;
+      let y=mg;
+      function chk(h){if(y+h>ph-mg){doc.addPage();y=mg;}}
+      function cl(s){return s.replace(/\*\*/g,'');}
+      function isH(l){return /^[A-Z][A-Z\s\/]{3,}$/.test(l.trim());}
+      const lines=text.split('\n');const hdr=[];let i=0;
+      while(i<lines.length){const l=cl(lines[i]).trim();if(l===''&&hdr.length>0){i++;break;}if(isH(l)&&hdr.length>0)break;hdr.push(l);i++;}
+      if(hdr.length>0){
+        doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(15,15,15);doc.text(hdr[0],mg,y);y+=22;
+        if(hdr[1]&&!/[@+http]/.test(hdr[1])){doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(80,80,80);doc.text(hdr[1],mg,y);y+=16;}
+        const cc=hdr.slice(2).filter(l=>l.length>0);
+        if(cc.length>0){doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(110,110,110);doc.splitTextToSize(cc.join('  |  '),mw).forEach(c=>{chk(13);doc.text(c,mg,y);y+=13;});y+=4;}
+        doc.setDrawColor(210,210,210);doc.setLineWidth(0.5);doc.line(mg,y,pw-mg,y);y+=14;
+      }
+      while(i<lines.length){
+        const raw=lines[i];const l=cl(raw).trim();i++;
+        if(l===''){y+=5;continue;}
+        if(isH(l)){y+=6;chk(20);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(100,100,100);doc.text(l,mg,y);y+=5;doc.setDrawColor(220,220,220);doc.setLineWidth(0.4);doc.line(mg,y,pw-mg,y);y+=12;continue;}
+        if(/^[\*\-\u2022]/.test(l)){
+          const c=l.replace(/^[\*\-\u2022]\s*/,'');const bold=raw.includes('**')||/\(.*\)/.test(c);
+          doc.setFontSize(10);doc.setTextColor(20,20,20);
+          if(bold){const pts=c.split(/ [-] | [·] /);const ttl=pts[0].trim();const rest=pts.slice(1).join(' - ').trim();chk(14);doc.setFont('helvetica','bold');doc.splitTextToSize('• '+ttl,mw-10).forEach(t=>{chk(14);doc.text(t,mg,y);y+=14;});if(rest){doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(60,60,60);doc.splitTextToSize(rest,mw-14).forEach(r=>{chk(13);doc.text('  '+r,mg+8,y);y+=13;});}}
+          else{doc.setFont('helvetica','normal');doc.splitTextToSize('• '+c,mw-10).forEach(w=>{chk(14);doc.text(w,mg,y);y+=14;});}
+          continue;
+        }
+        doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.splitTextToSize(l,mw).forEach(w=>{chk(14);doc.text(w,mg,y);y+=14;});
+      }
+      doc.save(getFn('pdf'));setSt('Downloaded.','ok');
+    }
+    function clrAll(){document.getElementById('inp').value='';document.getElementById('out').value='';document.getElementById('ow').classList.remove('show');clearF();setSt('','');}
+    function setSt(m,t){const el=document.getElementById('st');el.textContent=m;el.className='st'+(t?' '+t:'');}
+  </script>
+</body>
+</html>
